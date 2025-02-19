@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <title>Test popunder links</title>
-    <script src="dist/esm/popunder.js"></script>
+    <script type="module">
+      import * as Popunder from "./src/popunder.ts";
+      Popunder.install();
+    </script>
   </head>
   <body>
     <ul>
@@ -12,8 +15,9 @@
           href="https://www.google.com"
           target="_blank"
           data-popunder="https://www.bing.com"
-          >Google</a
         >
+          Google
+        </a>
       </li>
       <li>
         <a
@@ -21,8 +25,9 @@
           target="_blank"
           data-popunder="https://www.amazon.com"
           data-refresh-delay="0"
-          >Amazon</a
         >
+          Amazon
+        </a>
       </li>
       <li>
         <a href="https://www.bing.com">Bing</a>

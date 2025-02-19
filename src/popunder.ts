@@ -69,7 +69,7 @@ function reset() {
   clearTimeout(timoutId);
 }
 
-function attachPopunder() {
+export function attachPopunder() {
   if (loaded) {
     return;
   }
@@ -84,8 +84,18 @@ function attachPopunder() {
   loaded = true;
 }
 
-// for Google Tag Manager
-window.addEventListener("load", attachPopunder);
-if (document.readyState === "complete") {
-  attachPopunder();
+export function detachPopunder() {
+  document.body.removeEventListener("click", onClick);
+  if (useOnvisibilityChange) {
+    document.removeEventListener("visibilitychange", onVisibilityChange);
+  }
+  loaded = false;
+}
+
+export function install() {
+  // for Google Tag Manager
+  window.addEventListener("load", attachPopunder);
+  if (document.readyState === "complete") {
+    attachPopunder();
+  }
 }
