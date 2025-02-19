@@ -13,7 +13,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "module": "dist/es/popunder.js",
+  "module": "dist/esm/popunder.js",
   "main": "dist/cjs/popunder.js",
   "types": "dist/types/popunder.d.ts",
   "type": "module",
@@ -23,7 +23,7 @@
   "exports": {
     ".": {
       "types": "./dist/types/popunder.d.ts",
-      "import": "./dist/es/popunder.js",
+      "import": "./dist/esm/popunder.js",
       "require": "./dist/cjs/popunder.js"
     }
   },
