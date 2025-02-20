@@ -1,6 +1,6 @@
 {
   "name": "@giftomatic/popunder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight JavaScript module that opens two links simultaneously: one in a new tab and another as a 'popunder' in the original tab after a configurable delay. If the user returns to the original tab before redirection, the event is canceled.",
   "scripts": {
     "test": "vitest",
