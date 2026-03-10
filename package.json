@@ -38,11 +38,11 @@
     }
   },
   "devDependencies": {
-    "@vitest/browser": "^3.0.6",
-    "happy-dom": "^17.1.1",
-    "typescript": "^5.7.3",
-    "vite": "^6.1.1",
-    "vite-plugin-dts": "^4.5.0",
-    "vitest": "^3.0.6"
+    "@vitest/browser": "^3.2.4",
+    "happy-dom": "^17.6.3",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4"
   }
 }
