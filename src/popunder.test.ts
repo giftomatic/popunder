@@ -1,9 +1,10 @@
-import { describe, beforeEach, expect, test, vi } from "vitest";
-import { install } from "./popunder";
+import { describe, beforeEach, afterEach, expect, test, vi } from "vitest";
+import { install, detachPopunder } from "./popunder";
 
 describe("Popunder", () => {
   function setupElements() {
     document.location.href = "http://localhost/";
+    document.body.innerHTML = "";
 
     const anchor = document.createElement("a");
     anchor.href = "https://example.com/";
@@ -21,11 +22,22 @@ describe("Popunder", () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    vi.spyOn(window, "open").mockImplementation((url, target) => {
+    vi.restoreAllMocks();
+    document.body.innerHTML = "";
+    document.location.href = "http://localhost/";
+
+    vi.spyOn(window, "open").mockImplementation((url) => {
       return {
-        location: { href: url },
+        location: { href: url as string },
       } as Window;
     });
+  });
+
+  afterEach(() => {
+    detachPopunder();
+    vi.clearAllTimers();
+    vi.clearAllMocks();
+    document.body.innerHTML = "";
   });
 
   test("Regular links should not trigger popunder", () => {
@@ -42,7 +54,7 @@ describe("Popunder", () => {
 
     expect(document.location.href).toContain("localhost");
     anchor2.click();
-    expect(document.location.href).contain("localhost");
+    expect(document.location.href).toContain("localhost");
     expect(window.open).toHaveBeenCalledWith("https://example.com/", "_blank");
 
     vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
@@ -101,7 +113,9 @@ describe("Popunder", () => {
   test("click on element in the document body should not trigger popunder", () => {
     const el = document.createElement("div");
     document.body.appendChild(el);
+
     el.click();
+
     expect(window.open).not.toHaveBeenCalled();
   });
 });
