@@ -10,7 +10,7 @@ const validHttpUrlPattern = new RegExp(
     "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
     "(\\?[;&a-z\\d%_.~+=-]*)?" +
     "(\\#[-a-z\\d_]*)?$",
-  "i"
+  "i",
 );
 
 function onClick(e: MouseEvent) {
@@ -25,7 +25,7 @@ function onClick(e: MouseEvent) {
     activePopunderUrl = popunder;
 
     if (element.getAttribute("data-refresh-delay")) {
-      refreshDelay = parseInt(element.getAttribute("data-refresh-delay"), 10);
+      refreshDelay = parseInt(element.getAttribute("data-refresh-delay")!, 10);
     }
 
     if (!useOnvisibilityChange) {
@@ -36,7 +36,7 @@ function onClick(e: MouseEvent) {
 }
 
 function getParentAnchor(
-  element: EventTarget | HTMLElement | null
+  element: EventTarget | HTMLElement | null,
 ): HTMLAnchorElement | null {
   while (element && element instanceof HTMLElement) {
     if (element instanceof HTMLAnchorElement) {
@@ -57,7 +57,7 @@ function onVisibilityChange() {
 
 function redirectToPopunder() {
   if (activePopunderUrl !== undefined) {
-    timoutId = setTimeout(() => {
+    timoutId = window.setTimeout(() => {
       document.location.href = activePopunderUrl!;
     }, refreshDelay * 1000);
   }
@@ -73,7 +73,7 @@ export function attachPopunder() {
   if (loaded) {
     return;
   }
-  document.body.addEventListener("click", onClick);
+  document.body.addEventListener("click", onClick, true);
 
   if ("hidden" in document) {
     document.addEventListener("visibilitychange", onVisibilityChange);
@@ -85,7 +85,7 @@ export function attachPopunder() {
 }
 
 export function detachPopunder() {
-  document.body.removeEventListener("click", onClick);
+  document.body.removeEventListener("click", onClick, true);
   if (useOnvisibilityChange) {
     document.removeEventListener("visibilitychange", onVisibilityChange);
   }
