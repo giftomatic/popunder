@@ -48,7 +48,8 @@ import * as Popunder from "https://cdn.jsdelivr.net/npm/@giftomatic/popunder@1.0
 
 ## Configuration
 
-| Option               | Type   | Required | Description                                                 |
-| -------------------- | ------ | -------- | ----------------------------------------------------------- |
-| `data-popunder`      | URL    | Yes      | URL to open as a popunder                                   |
-| `data-refresh-delay` | Number | No       | Delay in seconds before opening the popunder, default is 3s |
+| Option                   | Type    | Required | Description                                                                  |
+| ------------------------ | ------- | -------- | ---------------------------------------------------------------------------- |
+| `data-popunder`          | URL     | Yes      | URL to open as a popunder                                                    |
+| `data-refresh-delay`     | Number  | No       | Delay in seconds before opening the popunder, default is 3s                  |
+| `data-show-notification` | Boolean | No       | Whether to show a notification on mobile before opening the popunder, default is false |

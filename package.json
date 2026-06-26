@@ -3,6 +3,7 @@
   "version": "1.0.3",
   "description": "A lightweight JavaScript module that opens two links simultaneously: one in a new tab and another as a 'popunder' in the original tab after a configurable delay. If the user returns to the original tab before redirection, the event is canceled.",
   "scripts": {
+    "dev": "vite",
     "test": "vitest",
     "prepublish": "npm run build",
     "build": "pnpm run \"/^build:.*/\"",
@@ -39,9 +40,9 @@
   },
   "devDependencies": {
     "@vitest/browser": "^4.1.9",
-    "happy-dom": "^20.10.3",
+    "happy-dom": "^20.10.6",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16",
+    "vite": "^8.1.0",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.1.9"
   }

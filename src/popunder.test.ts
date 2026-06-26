@@ -83,6 +83,42 @@ describe("Popunder", () => {
     expect(document.location.href).toBe("https://example.com/popunder");
   });
 
+  test("Mobile links with data-show-notification should open links after confirming notification", () => {
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Mobile",
+    );
+    const { anchor2 } = setupElements();
+    anchor2.setAttribute("data-show-notification", "true");
+
+    anchor2.click();
+
+    expect(document.getElementById("popunder-notification")).not.toBeNull();
+    expect(window.open).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(5000);
+    expect(document.getElementById("popunder-notification")).not.toBeNull();
+    expect(window.open).not.toHaveBeenCalled();
+
+    document
+      .querySelector<HTMLButtonElement>("#popunder-notification button")!
+      .click();
+    expect(document.getElementById("popunder-notification")).toBeNull();
+    expect(window.open).toHaveBeenCalledWith("https://example.com/", "_blank");
+  });
+
+  test("Desktop links with data-show-notification should trigger popunder immediately", () => {
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0)",
+    );
+    const { anchor2 } = setupElements();
+    anchor2.setAttribute("data-show-notification", "true");
+
+    anchor2.click();
+
+    expect(document.getElementById("popunder-notification")).toBeNull();
+    expect(window.open).toHaveBeenCalledWith("https://example.com/", "_blank");
+  });
+
   test("Links with data-popunder should not trigger popunder when visibility changes", () => {
     const { anchor2 } = setupElements();
 
