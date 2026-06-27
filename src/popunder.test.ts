@@ -83,6 +83,59 @@ describe("Popunder", () => {
     expect(document.location.href).toBe("https://example.com/popunder");
   });
 
+  test("Links with data-refresh-delay-mobile should use mobile delay on mobile devices", () => {
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
+    );
+    const { anchor2 } = setupElements();
+    anchor2.setAttribute("data-refresh-delay", "5");
+    anchor2.setAttribute("data-refresh-delay-mobile", "1");
+
+    anchor2.click();
+    vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
+    document.dispatchEvent(new Event("visibilitychange"));
+
+    vi.advanceTimersByTime(999);
+    expect(document.location.href).toContain("localhost");
+    vi.advanceTimersByTime(1);
+    expect(document.location.href).toBe("https://example.com/popunder");
+  });
+
+  test("Mobile devices should fall back to data-refresh-delay when mobile delay is not set", () => {
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
+      "Mozilla/5.0 (Linux; Android 14; Pixel 8)",
+    );
+    const { anchor2 } = setupElements();
+    anchor2.setAttribute("data-refresh-delay", "5");
+
+    anchor2.click();
+    vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
+    document.dispatchEvent(new Event("visibilitychange"));
+
+    vi.advanceTimersByTime(4999);
+    expect(document.location.href).toContain("localhost");
+    vi.advanceTimersByTime(1);
+    expect(document.location.href).toBe("https://example.com/popunder");
+  });
+
+  test("Desktop devices should ignore data-refresh-delay-mobile", () => {
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0)",
+    );
+    const { anchor2 } = setupElements();
+    anchor2.setAttribute("data-refresh-delay", "5");
+    anchor2.setAttribute("data-refresh-delay-mobile", "1");
+
+    anchor2.click();
+    vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
+    document.dispatchEvent(new Event("visibilitychange"));
+
+    vi.advanceTimersByTime(4999);
+    expect(document.location.href).toContain("localhost");
+    vi.advanceTimersByTime(1);
+    expect(document.location.href).toBe("https://example.com/popunder");
+  });
+
   test("Links with data-popunder should not trigger popunder when visibility changes", () => {
     const { anchor2 } = setupElements();
 

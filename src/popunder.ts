@@ -3,6 +3,8 @@ let refreshDelay = 3;
 let activePopunderUrl: string | undefined;
 let timoutId: number | undefined;
 let useOnvisibilityChange = true;
+const mobileUserAgentPattern =
+  /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i;
 
 const validHttpUrlPattern = new RegExp(
   "^(https?:\\/\\/)?" +
@@ -23,16 +25,32 @@ function onClick(e: MouseEvent) {
   if (!!popunder && validHttpUrlPattern.test(popunder)) {
     e.preventDefault();
     activePopunderUrl = popunder;
-
-    if (element.getAttribute("data-refresh-delay")) {
-      refreshDelay = parseInt(element.getAttribute("data-refresh-delay")!, 10);
-    }
+    refreshDelay = getRefreshDelay(element);
 
     if (!useOnvisibilityChange) {
       redirectToPopunder();
     }
     window.open(element.href, "_blank");
   }
+}
+
+function getRefreshDelay(element: HTMLAnchorElement) {
+  const mobileRefreshDelay = element.getAttribute(
+    "data-refresh-delay-mobile",
+  );
+  const defaultRefreshDelay = element.getAttribute("data-refresh-delay");
+  const configuredRefreshDelay =
+    isMobileUserAgent() && mobileRefreshDelay !== null
+      ? mobileRefreshDelay
+      : defaultRefreshDelay;
+
+  return configuredRefreshDelay !== null
+    ? parseInt(configuredRefreshDelay, 10)
+    : 3;
+}
+
+function isMobileUserAgent() {
+  return mobileUserAgentPattern.test(navigator.userAgent);
 }
 
 function getParentAnchor(
