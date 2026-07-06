@@ -64,6 +64,13 @@ describe("Popunder", () => {
     expect(document.location.href).toBe("https://example.com/popunder");
   });
 
+  test("Unsafe links (non-HTTPS) shouldn't trigger popunder", () => {
+    const { anchor2 } = setupElements();
+    anchor2.setAttribute("data-popunder", "http://example.com/");
+    anchor2.click();
+    expect(window.open).not.toHaveBeenCalled();
+  });
+
   test("Links with data-popunder and data-refresh-delay should trigger popunder after delay", () => {
     const { anchor2 } = setupElements();
     anchor2.setAttribute("data-refresh-delay", "5");

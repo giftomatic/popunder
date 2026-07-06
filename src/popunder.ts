@@ -6,38 +6,40 @@ let useOnvisibilityChange = true;
 const mobileUserAgentPattern =
   /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i;
 
-const validHttpUrlPattern = new RegExp(
-  "^(https?:\\/\\/)?" +
-    "(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}" +
-    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
-    "(\\?[;&a-z\\d%_.~+=-]*)?" +
-    "(\\#[-a-z\\d_]*)?$",
-  "i",
-);
-
 function onClick(e: MouseEvent) {
   const element = getParentAnchor(e.target);
   if (!element) {
     return;
   }
 
+  // Check popunder URL defined
   const popunder = element.getAttribute("data-popunder");
-  if (!!popunder && validHttpUrlPattern.test(popunder)) {
-    e.preventDefault();
-    activePopunderUrl = popunder;
-    refreshDelay = getRefreshDelay(element);
-
-    if (!useOnvisibilityChange) {
-      redirectToPopunder();
-    }
-    window.open(element.href, "_blank");
+  if (!popunder) {
+    return;
   }
+
+  // Check popunder URL is valid HTTPS URL
+  try {
+    const validUrl = new URL(popunder);
+    if (validUrl.protocol !== "https:") {
+      return;
+    }
+  } catch (e) {
+    return;
+  }
+
+  e.preventDefault();
+  activePopunderUrl = popunder;
+  refreshDelay = getRefreshDelay(element);
+
+  if (!useOnvisibilityChange) {
+    redirectToPopunder();
+  }
+  window.open(element.href, "_blank");
 }
 
 function getRefreshDelay(element: HTMLAnchorElement) {
-  const mobileRefreshDelay = element.getAttribute(
-    "data-refresh-delay-mobile",
-  );
+  const mobileRefreshDelay = element.getAttribute("data-refresh-delay-mobile");
   const defaultRefreshDelay = element.getAttribute("data-refresh-delay");
   const configuredRefreshDelay =
     isMobileUserAgent() && mobileRefreshDelay !== null
