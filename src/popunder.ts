@@ -3,15 +3,8 @@ let refreshDelay = 3;
 let activePopunderUrl: string | undefined;
 let timoutId: number | undefined;
 let useOnvisibilityChange = true;
-
-const validHttpUrlPattern = new RegExp(
-  "^(https?:\\/\\/)?" +
-    "(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}" +
-    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
-    "(\\?[;&a-z\\d%_.~+=-]*)?" +
-    "(\\#[-a-z\\d_]*)?$",
-  "i",
-);
+const mobileUserAgentPattern =
+  /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i;
 
 function onClick(e: MouseEvent) {
   const element = getParentAnchor(e.target);
@@ -19,20 +12,47 @@ function onClick(e: MouseEvent) {
     return;
   }
 
+  // Check popunder URL defined
   const popunder = element.getAttribute("data-popunder");
-  if (!!popunder && validHttpUrlPattern.test(popunder)) {
-    e.preventDefault();
-    activePopunderUrl = popunder;
-
-    if (element.getAttribute("data-refresh-delay")) {
-      refreshDelay = parseInt(element.getAttribute("data-refresh-delay")!, 10);
-    }
-
-    if (!useOnvisibilityChange) {
-      redirectToPopunder();
-    }
-    window.open(element.href, "_blank");
+  if (!popunder) {
+    return;
   }
+
+  // Check popunder URL is valid HTTPS URL
+  try {
+    const validUrl = new URL(popunder);
+    if (validUrl.protocol !== "https:") {
+      return;
+    }
+  } catch (e) {
+    return;
+  }
+
+  e.preventDefault();
+  activePopunderUrl = popunder;
+  refreshDelay = getRefreshDelay(element);
+
+  if (!useOnvisibilityChange) {
+    redirectToPopunder();
+  }
+  window.open(element.href, "_blank");
+}
+
+function getRefreshDelay(element: HTMLAnchorElement) {
+  const mobileRefreshDelay = element.getAttribute("data-refresh-delay-mobile");
+  const defaultRefreshDelay = element.getAttribute("data-refresh-delay");
+  const configuredRefreshDelay =
+    isMobileUserAgent() && mobileRefreshDelay !== null
+      ? mobileRefreshDelay
+      : defaultRefreshDelay;
+
+  return configuredRefreshDelay !== null
+    ? parseInt(configuredRefreshDelay, 10)
+    : 3;
+}
+
+function isMobileUserAgent() {
+  return mobileUserAgentPattern.test(navigator.userAgent);
 }
 
 function getParentAnchor(

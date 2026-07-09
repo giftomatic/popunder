@@ -1,2 +1,6 @@
 allowBuilds:
   msw: false
+ignoredBuiltDependencies:
+  - msw
+overrides:
+  expect-type: 1.3.0
