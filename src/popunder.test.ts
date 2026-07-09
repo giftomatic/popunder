@@ -143,6 +143,40 @@ describe("Popunder", () => {
     expect(document.location.href).toBe("https://example.com/popunder");
   });
 
+  test("Android in-app browsers should ignore the popunder link", () => {
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
+      "Mozilla/5.0 (Linux; Android 14; Pixel 8 Build/UP1A.231005.007; wv) AppleWebKit/537.36 Version/4.0 Chrome/120.0.0.0 Mobile Safari/537.36 Gmail",
+    );
+    const { anchor2 } = setupElements();
+
+    anchor2.click();
+
+    expect(window.open).toHaveBeenCalledWith("https://example.com/", "_blank");
+    expect(document.location.href).toContain("localhost");
+
+    vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
+    document.dispatchEvent(new Event("visibilitychange"));
+    vi.advanceTimersByTime(3000);
+    expect(document.location.href).toContain("localhost");
+  });
+
+  test("iOS in-app browsers should ignore the popunder link", () => {
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Gmail",
+    );
+    const { anchor2 } = setupElements();
+
+    anchor2.click();
+
+    expect(window.open).toHaveBeenCalledWith("https://example.com/", "_blank");
+    expect(document.location.href).toContain("localhost");
+
+    vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
+    document.dispatchEvent(new Event("visibilitychange"));
+    vi.advanceTimersByTime(3000);
+    expect(document.location.href).toContain("localhost");
+  });
+
   test("Links with data-popunder should not trigger popunder when visibility changes", () => {
     const { anchor2 } = setupElements();
 
