@@ -6,18 +6,18 @@ describe("Popunder", () => {
     document.location.href = "http://localhost/";
     document.body.innerHTML = "";
 
-    const anchor = document.createElement("a");
-    anchor.href = "https://example.com/";
-    document.body.appendChild(anchor);
+    const regularAnchor = document.createElement("a");
+    regularAnchor.href = "https://example.com/";
+    document.body.appendChild(regularAnchor);
 
-    const anchor2 = document.createElement("a");
-    anchor2.href = "https://example.com/";
-    anchor2.setAttribute("data-popunder", "https://example.com/popunder");
-    document.body.appendChild(anchor2);
+    const anchorWithPopUnder = document.createElement("a");
+    anchorWithPopUnder.href = "https://example.com/";
+    anchorWithPopUnder.setAttribute("data-popunder", "https://example.com/popunder");
+    document.body.appendChild(anchorWithPopUnder);
 
     install();
 
-    return { anchor, anchor2 };
+    return { regularAnchor, anchorWithPopUnder };
   }
 
   beforeEach(() => {
@@ -41,19 +41,19 @@ describe("Popunder", () => {
   });
 
   test("Regular links should not trigger popunder", () => {
-    const { anchor } = setupElements();
+    const { regularAnchor } = setupElements();
 
     expect(document.location.href).toContain("localhost");
-    anchor.click();
+    regularAnchor.click();
     expect(document.location.href).toBe("https://example.com/");
     expect(window.open).not.toHaveBeenCalled();
   });
 
   test("Links with data-popunder should trigger popunder", () => {
-    const { anchor2 } = setupElements();
+    const { anchorWithPopUnder } = setupElements();
 
     expect(document.location.href).toContain("localhost");
-    anchor2.click();
+    anchorWithPopUnder.click();
     expect(document.location.href).toContain("localhost");
     expect(window.open).toHaveBeenCalledWith("https://example.com/", "_blank");
 
@@ -65,18 +65,18 @@ describe("Popunder", () => {
   });
 
   test("Unsafe links (non-HTTPS) shouldn't trigger popunder", () => {
-    const { anchor2 } = setupElements();
-    anchor2.setAttribute("data-popunder", "http://example.com/");
-    anchor2.click();
+    const { anchorWithPopUnder } = setupElements();
+    anchorWithPopUnder.setAttribute("data-popunder", "http://example.com/");
+    anchorWithPopUnder.click();
     expect(window.open).not.toHaveBeenCalled();
   });
 
   test("Links with data-popunder and data-refresh-delay should trigger popunder after delay", () => {
-    const { anchor2 } = setupElements();
-    anchor2.setAttribute("data-refresh-delay", "5");
+    const { anchorWithPopUnder } = setupElements();
+    anchorWithPopUnder.setAttribute("data-refresh-delay", "5");
 
     expect(document.location.href).toContain("localhost");
-    anchor2.click();
+    anchorWithPopUnder.click();
     expect(document.location.href).toContain("localhost");
     expect(window.open).toHaveBeenCalledWith("https://example.com/", "_blank");
 
@@ -94,11 +94,11 @@ describe("Popunder", () => {
     vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
       "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
     );
-    const { anchor2 } = setupElements();
-    anchor2.setAttribute("data-refresh-delay", "5");
-    anchor2.setAttribute("data-refresh-delay-mobile", "1");
+    const { anchorWithPopUnder } = setupElements();
+    anchorWithPopUnder.setAttribute("data-refresh-delay", "5");
+    anchorWithPopUnder.setAttribute("data-refresh-delay-mobile", "1");
 
-    anchor2.click();
+    anchorWithPopUnder.click();
     vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
     document.dispatchEvent(new Event("visibilitychange"));
 
@@ -112,10 +112,10 @@ describe("Popunder", () => {
     vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
       "Mozilla/5.0 (Linux; Android 14; Pixel 8)",
     );
-    const { anchor2 } = setupElements();
-    anchor2.setAttribute("data-refresh-delay", "5");
+    const { anchorWithPopUnder } = setupElements();
+    anchorWithPopUnder.setAttribute("data-refresh-delay", "5");
 
-    anchor2.click();
+    anchorWithPopUnder.click();
     vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
     document.dispatchEvent(new Event("visibilitychange"));
 
@@ -129,11 +129,11 @@ describe("Popunder", () => {
     vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0)",
     );
-    const { anchor2 } = setupElements();
-    anchor2.setAttribute("data-refresh-delay", "5");
-    anchor2.setAttribute("data-refresh-delay-mobile", "1");
+    const { anchorWithPopUnder } = setupElements();
+    anchorWithPopUnder.setAttribute("data-refresh-delay", "5");
+    anchorWithPopUnder.setAttribute("data-refresh-delay-mobile", "1");
 
-    anchor2.click();
+    anchorWithPopUnder.click();
     vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
     document.dispatchEvent(new Event("visibilitychange"));
 
@@ -147,9 +147,9 @@ describe("Popunder", () => {
     vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
       "Mozilla/5.0 (Linux; Android 14; Pixel 8 Build/UP1A.231005.007; wv) AppleWebKit/537.36 Version/4.0 Chrome/120.0.0.0 Mobile Safari/537.36 Gmail",
     );
-    const { anchor2 } = setupElements();
+    const { anchorWithPopUnder } = setupElements();
 
-    anchor2.click();
+    anchorWithPopUnder.click();
 
     expect(window.open).toHaveBeenCalledWith("https://example.com/", "_blank");
     expect(document.location.href).toContain("localhost");
@@ -164,9 +164,9 @@ describe("Popunder", () => {
     vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
       "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Gmail",
     );
-    const { anchor2 } = setupElements();
+    const { anchorWithPopUnder } = setupElements();
 
-    anchor2.click();
+    anchorWithPopUnder.click();
 
     expect(window.open).toHaveBeenCalledWith("https://example.com/", "_blank");
     expect(document.location.href).toContain("localhost");
@@ -178,10 +178,10 @@ describe("Popunder", () => {
   });
 
   test("Links with data-popunder should not trigger popunder when visibility changes", () => {
-    const { anchor2 } = setupElements();
+    const { anchorWithPopUnder } = setupElements();
 
     expect(document.location.href).toContain("localhost");
-    anchor2.click();
+    anchorWithPopUnder.click();
     expect(document.location.href).toContain("localhost");
     expect(window.open).toHaveBeenCalledWith("https://example.com/", "_blank");
 
@@ -193,10 +193,10 @@ describe("Popunder", () => {
   });
 
   test("click on element nested in an anchor element should trigger popunder", () => {
-    const { anchor2 } = setupElements();
+    const { anchorWithPopUnder } = setupElements();
 
     const span = document.createElement("span");
-    anchor2.appendChild(span);
+    anchorWithPopUnder.appendChild(span);
 
     expect(document.location.href).toContain("localhost");
     span.click();
