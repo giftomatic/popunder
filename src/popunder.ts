@@ -8,6 +8,11 @@ const mobileUserAgentPattern =
 const inAppBrowserUserAgentPattern =
   /; wv\)|\bwv\b|gmail|outlook|microsoft outlook|fban|fbav|instagram|line|linkedinapp|tiktok|twitter/i;
 
+/**
+ * Entry point.
+ * An event handler that is associated to the whole page. Triggers on every click. Gets closest anchor tag and
+ * if the custom data attributes are defined, executes the popunder logic.
+ */
 function onClick(e: MouseEvent) {
   const element = getParentAnchor(e.target);
   if (!element) {
