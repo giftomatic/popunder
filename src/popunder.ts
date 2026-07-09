@@ -5,7 +5,14 @@ let timoutId: number | undefined;
 let useOnvisibilityChange = true;
 const mobileUserAgentPattern =
   /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i;
+const inAppBrowserUserAgentPattern =
+  /; wv\)|\bwv\b|gmail|outlook|microsoft outlook|fban|fbav|instagram|line|linkedinapp|tiktok|twitter/i;
 
+/**
+ * Entry point.
+ * An event handler that is associated to the whole page. Triggers on every click. Gets closest anchor tag and
+ * if the custom data attributes are defined, executes the popunder logic.
+ */
 function onClick(e: MouseEvent) {
   const element = getParentAnchor(e.target);
   if (!element) {
@@ -29,6 +36,12 @@ function onClick(e: MouseEvent) {
   }
 
   e.preventDefault();
+
+  if (isMobileInAppBrowser()) {
+    window.open(element.href, "_blank");
+    return;
+  }
+
   activePopunderUrl = popunder;
   refreshDelay = getRefreshDelay(element);
 
@@ -53,6 +66,24 @@ function getRefreshDelay(element: HTMLAnchorElement) {
 
 function isMobileUserAgent() {
   return mobileUserAgentPattern.test(navigator.userAgent);
+}
+
+function isMobileInAppBrowser() {
+  const userAgent = navigator.userAgent;
+
+  return (
+    isMobileUserAgent() &&
+    (inAppBrowserUserAgentPattern.test(userAgent) ||
+      isIosWebViewUserAgent(userAgent))
+  );
+}
+
+function isIosWebViewUserAgent(userAgent: string) {
+  return (
+    /iphone|ipad|ipod/i.test(userAgent) &&
+    /applewebkit/i.test(userAgent) &&
+    !/safari/i.test(userAgent)
+  );
 }
 
 function getParentAnchor(
